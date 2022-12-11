@@ -1,0 +1,81 @@
+Title: Apache Velocity Tools - Generic Tools
+
+## Overview
+
+GenericTools is the set of classes that provide basic infrastructure for using tools in standard Java SE Velocity projects, as well as a set of tools for use in generic Velocity templates. These tools have no Java EE dependencies and are often safe to use as "singletons".  Some of them are not thread-safe to allow both a no-arg constructor and configurability, but the state-changing methods are declared protected with the exception of configure(Map) which is--by default--rendered useless after being used just once.  If you require strict thread-safety, be cautious in using any configurable tools and consider [restricting the abilities of template authors](http://wiki.apache.org/velocity/BuildingSecureWebApplications) to prevent circumvention of the lockdown placed on configuration methods.
+
+## Installation
+
+For inclusion in a Maven project, use the following dependency block:
+
+    :::xml
+    <dependency>
+        <groupId>org.apache.velocity.tools</groupId>
+        <artifactId>velocity-tools-generic</artifactId>
+        <version>3.0</version>
+    </dependency>
+
+Otherwise, see the [download page](/download.cgi#tools) for how to get the Velocity Generic Tools jar.
+
+## Usage
+
++ Initialization with only standard generic tools, using the default configuration file:
+    
+        :::java
+        /* Create tools initialization properties */
+        Map<String, Object> properties = new HashMap<String, Object>();
+        /* RenderTool needs to know the VelocityEngine. Setting the engine will also set the logger. */
+        properties.put("engine", engine);
+        /* If the render tool is not to be used, you can instead just set the logger if needed as follow:
+         *
+         *   properties.put("log", logger);
+         *
+         * Otherwise, the engine logger will be used.
+         * 
+         */
+        
+        /* Create the manager. autoConfigure and includeDefaults are both booleans which default to true. */
+        ToolManager manager = new ToolManager(autoConfigure, includeDefaults);
+
++ Initialization using a provided configuration file (to customize tools or tune standard tools configuration):
+    
+        :::java
+        /* Create tools initialization properties */
+        Map<String, Object> properties = new HashMap<String, Object>();
+        /* RenderTool needs to know the VelocityEngine. Setting the engine will also set the logger. */
+        properties.put("engine", engine);
+        /* If the render tool is not to be used, you can instead just set the logger if needed as follow:
+         *
+         *   properties.put("log", logger);
+         *
+         * Otherwise, the engine logger will be used.
+         * 
+         */
+        
+        /* Create the manager. includeDefaults is a boolean which defaults to true. */
+        ToolManager manager = new ToolManager(false, includeDefaults);
+
+        /* Configure the manager
+         * toolsConfiguration is a filesystem- or class- path towards your tools configuration,
+         * which can be a .xml, a .properties, or a .class of a configuration factory which
+         * has a getConfiguration() method returning a FactoryConfiguration object.");
+         */
+        manager.configure(toolsConfiguration);
+
+You can then create Velocity contexts with:
+    
+        :::java
+        Context context = manager.createContext();
+
+
+## Default Configuration
+
+The default configuration provided for GenericTools is [here](https://github.com/apache/velocity-tools/blob/master/velocity-tools-generic/src/main/resources/org/apache/velocity/tools/generic/tools.xml). It includes all of the tools listed [below](#tools).
+
+## Dependencies
+
+The dependencies required for GenericTools vary somewhat depending on which tools you use, whether you will rely on core tool management infrastructure, and if so, how you choose to configure your toolbox.  More details can be found on the [dependencies chart](dependencies.html#GenericTools).
+
+## Tools
+
+Please consult the [Standard Tools](tools-summary.html) page for a list of standard generic tools.
